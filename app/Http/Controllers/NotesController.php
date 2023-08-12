@@ -9,11 +9,12 @@ use Illuminate\Support\Facades\Validator;
 
 
 
+
 class NotesController extends Controller
 {
-    public function __construct()
-    {
-    }
+    // public function __construct()
+    // {
+    // }
     public function create(Request $request)
     {
 
@@ -48,59 +49,6 @@ class NotesController extends Controller
     }
 
 
-
-    //     public function getNotes(Request $request)
-    //     {
-    //         if (!auth()->check()) {
-    //             return response()->json(['message' => 'Unauthorized user'], 401);
-    //         }
-    //         $user = auth()->user();
-    //         if (!$user) {
-    //             return response()->json(['message' => 'user not found'], 404);
-    //         }
-    //         $notes = $user->note;
-    //         return response()->json(['Notes' => $notes]);
-    //     }
-
-
-    //     public function updateNote(Request $request, $id)
-    //     {
-    //         if (!auth()->check()) {
-    //             return response()->json(['message' => 'Unauthrized'], 401);
-    //         }
-    //         $user = auth()->user();
-    //         if (!$user) {
-    //             return response()->json(['message' => 'user not found'], 404);
-    //         }
-    //         $note = Note::find($id);
-    //         if (!$note) {
-    //             return response()->json(['message' => 'Note not fond']);
-    //         }
-    //         if ($note->user_id !== $user->id) {
-    //             return response()->json(['message' => 'Unauthorized to edit this note'], 403);
-    //         }
-    //         $validator = Validator::make($request->all(), [
-    //             'title' => 'required|string',
-    //             'body' => 'required|string',
-    //         ]);
-    //         if ($validator->fails()) {
-    //             return response()->json($validator->errors());
-    //         }
-    //         $note->update([
-    //             'title' => $request->title,
-    //             'body' => $request->content,
-    //         ]);
-    //         return response()->json(['message' => 'Note updated successfully']);
-    //     }
-    // }
-
-
-
-
-
-
-
-
     public function getNotes()
     {
         if (!auth()->check()) {
@@ -112,8 +60,76 @@ class NotesController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        $notes = $user->notes; // Assuming you have a relationship set up in the User model
+        $notes = $user->notes;
+        // relationship set up in the User model
 
         return response()->json(['notes' => $notes], 200);
+    }
+
+
+
+
+    public function updateNote(Request $request, $id)
+    {
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthorized user'], 401);
+        }
+
+        $user = auth()->user();
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        // Find the note belonging to the authenticated user
+        $note = Note::find($id);
+        //id is also mentioned in url 
+        //and used in primary also but if we use title we have to write in different phase
+
+        if (!$note) {
+            return response()->json(['message' => 'Note not found'], 404);
+        }
+
+        // Validate the incoming request data for update
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'body' => 'required|string',
+
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([$validator->errors(), 400]);
+        }
+
+        // Update the note attributes
+        $note->title = $request->title;
+        $note->body = $request->body;
+
+
+        if ($note->save()) {
+            return response()->json(['message' => 'Note updated successfully'], 200);
+        } else {
+            return response()->json(['error' => 'Unable to update note'], 401);
+        }
+    }
+
+    public function deleteNotes($title)
+    {
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthorized user'], 401);
+        }
+
+        $user = auth()->user();
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        $note = Note::where('title', $title)->first();
+        //id can also be used in url because of primary key relation
+        //but if we use title we have to write in different phase
+        if (!$note) {
+            return response()->json(['message' => 'Note not found']);
+        }
+        $note->delete();
+
+        return response()->json(['message' => 'Note deleted successfully']);
     }
 }

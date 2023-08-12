@@ -26,7 +26,6 @@ use App\Http\Middleware\ApiMid;
 Route::post('/register',[AuthController::class,'register']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/forgotpassword',[AuthController::class,'forgotPassword']);
-
 Route::get('/notes/getnotes',[NotesController::class,'getNotes']);
 
 Route::group(['middleware' => 'auth:api'], function () {
@@ -35,11 +34,8 @@ Route::post('/verifyEmail',[AuthController::class,'verifyEmail']);
 Route::get('/userdetails',[AuthController::class,'userDetails']);
 Route::post('/resetpassword',[AuthController::class,'resetPassword']);
 Route::post('/note/create',[NotesController::class,'create']);
-Route::put('/note/update{id}',[NotesController::class,'updateNote']); //id manually
-
-
-
-
+Route::put('/note/update/{id}',[NotesController::class,'updateNote']); //id manually
+Route::delete('/note/delete/{title}',[NotesController::class,'deleteNotes']); 
 
 });
 
