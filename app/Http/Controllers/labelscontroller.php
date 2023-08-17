@@ -32,49 +32,4 @@ class Labelscontroller extends Controller
             'label' => $label
         ], 201);
     }
-    public function addNoteToLabel(Request $request, $label_id, $note_id)
-    {
-        $user = auth()->user();
-        $label = Label::findOrFail($label_id);
-        $note = Note::findOrFail($note_id);
-        $labelNote = new LabelNote();
-        $labelNote->user_id = $user->id;
-        $label->notes()->attach($note, ['user_id' => $user->id]);
-
-        return response()->json([
-            'message' => 'Note added to label successfully'
-        ], 200);
-    }
-    public function deleteNoteFromLabel(Request $request, $label_id, $note_id)
-    {
-        $label = Label::find($label_id);
-        $note = Note::find($note_id);
-        $label->notes()->detach($note);
-        return response()->json([' message' => 'Note deleted from label successfully '], 200);
-    }
-
-    public function deleteLabel(Request $request, $id)
-    {
-        $label = Label::find($id);
-        if (!$label) {
-            return response()->json(['Message' => 'Label Not found'], 404);
-        }
-        $label->delete();
-        return response()->json(['message' => 'Label deleted successfully'], 200);
-    }
-
-    public function updateLabel(Request $request, $id)
-    {
-        $label = Label::find($id);
-        if (!$label) {
-            return response()->json(['message' => 'Label not fond']);
-        }
-        $request->validate([
-            'name' => 'required|string|max:255'
-        ]);
-        $label->name = $request->input('name');
-        $label->save();
-        return response()->json(['
-        message' => 'Label updated successfully'], 200);
-    }
 }
