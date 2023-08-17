@@ -80,45 +80,7 @@ class AuthController extends Controller
         return response()->json(['user' => $user], 200);
     }
 
-    // public function forgetPassword(Request $request)
-    // {
-    //     $request->validate([
-    //         'email' => 'required|email',
-    //     ]);
 
-    //     $status = Password::sendResetLink($request->only('email'));
-
-    //     return $status === Password::RESET_LINK_SENT
-    //         ? response(['message' => trans($status)], 200)
-    //         : response(['message' => trans($status)], 422);
-    // }
-
-    // public function resetPassword(Request $request)
-    // {
-    //     $request->validate([
-    //         'email' => 'required|email',
-    //         'token' => 'required|string',
-    //         'password' => 'required|confirmed|min:8',
-    //     ]);
-
-    //     $status = Password::reset(
-    //         $request->only('email', 'password', 'password_confirmation', 'token'),
-    //         function ($user, $password) {
-    //             $user->forceFill([
-    //                 'password' => Hash::make($password),
-    //             ])->save();
-    //         }
-    //     );
-
-    //     return $status === Password::PASSWORD_RESET
-    //         ? response(['message' => trans($status)], 200)
-    //         : response(['message' => trans($status)], 422);
-    // }
-
-
-    //         ]);
-
-    //         }
     public function verifyEmail()
     {
         $id = request('id');
@@ -156,24 +118,31 @@ class AuthController extends Controller
     public function resetPassword(Request $request)
     {
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
 
             'email' => 'required|string|email',
             'password' => 'required|string|confirmed',
             'token' => 'required',
         ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
 
-        $passwordReset = PasswordResetToken::where('email', $request->email)->where('token', $request->token)->first();
-        if (!$passwordReset) {
+        // $t= Hash::make($request->token);
+        echo Hash::make($request->token);
+
+        $passwordReset = PasswordResetToken::where('email', $request->email)->first();
+
+        if (!$passwordReset || Hash::check($request->token, $passwordReset->token)) {
             return response()->json(['message' => "Please provide valid token"], 404);
         }
         $user = User::where('email', $passwordReset->email)->first();
-        if(!$user){
-            return response()->json(['message'=>"User not found"],404);
+        if (!$user) {
+            return response()->json(['message' => "User not found"], 404);
         }
         $user->password = Hash::make($request->password);
         $user->save();
         $passwordReset->delete();
-        return response()->json(['message'=> "Password changed Succesfully"]);
+        return response()->json(['message' => "Password changed Succesfully"],200);
     }
 }

@@ -14,4 +14,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');})->name('password.reset');
+    return view('auth.reset-password');})->name('password.reset');

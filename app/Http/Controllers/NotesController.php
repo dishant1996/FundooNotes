@@ -133,3 +133,8 @@ class NotesController extends Controller
         return response()->json(['message' => 'Note deleted successfully']);
     }
 }
+
+
+
+
+

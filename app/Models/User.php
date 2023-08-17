@@ -33,11 +33,17 @@ class User extends Authenticatable implements JWTsubject
         return $this->hasMany(Note::class);
     }
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    public function labels()
+    {
+        return $this->hasMany(Label::class);
+
+        /**
+         * The attributes that are mass assignable.
+         *
+         * @var array<int, string>
+         */
+    }
+
     public $table = 'users';
     protected $fillable = [
         'name',

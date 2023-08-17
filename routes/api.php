@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Labelscontroller;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\PasswordReset;
 use Illuminate\Http\Request;
@@ -33,10 +34,18 @@ Route::post('/logout',[AuthController::class,'logout']);
 Route::post('/verifyEmail',[AuthController::class,'verifyEmail']);
 Route::get('/userdetails',[AuthController::class,'userDetails']);
 Route::post('/resetpassword',[AuthController::class,'resetPassword']);
+
+
 Route::post('/note/create',[NotesController::class,'create']);
 Route::put('/note/update/{id}',[NotesController::class,'updateNote']); //id manually
 Route::delete('/note/delete/{title}',[NotesController::class,'deleteNotes']); 
 
+
+Route::post('/label/create',[Labelscontroller::class,'createLabel']); 
+Route::post('/addNoteTolabels/{labelsId}/notes/{noteId}',[Labelscontroller::class,'addNoteToLabel']); //add note from label 
+Route::delete('/deleteNoteFromLabel/{labelsId}/notes/{noteId}',[Labelscontroller::class,'deleteNoteFromLabel']); //del note from label
+Route::delete('/label/delete/{id}',[Labelscontroller::class,'deleteLabel']);
+    
 });
 
 

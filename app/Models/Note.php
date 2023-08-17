@@ -16,4 +16,8 @@ class Note extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function labels()
+    {
+        return $this->belongsToMany(Label::class, 'labels_note', 'note_id', 'label_id')->withTimestamps();
+    }
 }
