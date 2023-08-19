@@ -2,11 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Labelscontroller;
-use App\Http\Controllers\NotesController;
-use App\Http\Controllers\PasswordReset;
-use Illuminate\Http\Request;
+use App\Http\Controllers\NoteController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\ApiMid;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -27,8 +25,9 @@ use App\Http\Middleware\ApiMid;
 Route::post('/register',[AuthController::class,'register']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/forgotpassword',[AuthController::class,'forgotPassword']);
-Route::get('/notes/getnotes',[NotesController::class,'getNotes']);
+Route::get('/notes/getnotes',[NoteController::class,'getNotes']);
 
+//middleware used and grouped
 Route::group(['middleware' => 'auth:api'], function () {
 Route::post('/logout',[AuthController::class,'logout']);
 Route::post('/verifyEmail',[AuthController::class,'verifyEmail']);
@@ -36,15 +35,16 @@ Route::get('/userdetails',[AuthController::class,'userDetails']);
 Route::post('/resetpassword',[AuthController::class,'resetPassword']);
 
 
-Route::post('/note/create',[NotesController::class,'create']);
-Route::put('/note/update/{id}',[NotesController::class,'updateNote']); //id manually
-Route::delete('/note/delete/{title}',[NotesController::class,'deleteNotes']); 
+Route::post('/note/create',[NoteController::class,'create']);
+Route::put('/note/update/{id}',[NoteController::class,'updateNote']); //id manually
+Route::delete('/note/delete/{title}',[NoteController::class,'deleteNotes']); 
 
 
-Route::post('/label/create',[Labelscontroller::class,'createLabel']); 
-Route::post('/addNoteTolabels/{labelsId}/notes/{noteId}',[Labelscontroller::class,'addNoteToLabel']); //add note from label 
-Route::delete('/deleteNoteFromLabel/{labelsId}/notes/{noteId}',[Labelscontroller::class,'deleteNoteFromLabel']); //del note from label
-Route::delete('/label/delete/{id}',[Labelscontroller::class,'deleteLabel']);
+Route::post('/label/make',[Labelscontroller::class,'makeLabel']); 
+Route::post('/addNoteTolabel/{labelsId}/notes/{noteId}',[Labelscontroller::class,'addNoteToLabel']); //add note from label 
+Route::delete('/delNoteFromLabel/{labelsId}/notes/{noteId}',[Labelscontroller::class,'delNoteFromLabel']); //del note from label
+Route::delete('/label/delLabel/{id}',[Labelscontroller::class,'delLabel']);
+Route::put('/label/update/{id}',[Labelscontroller::class,'updateLabel']);
     
 });
 

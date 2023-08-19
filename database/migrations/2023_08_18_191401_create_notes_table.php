@@ -12,32 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('notes', function (Blueprint $table) {
-
-            $table->increments('id');
-            //id for note
-            $table->unsignedBigInteger('user_id')->nullable();
-            //userid on note
+            $table->id();
             $table->string('title')->nullable();
-            //title of note
-            $table->string('body')->nullable();
-            //content inside 
-            $table->string('remainder')->nullable();
-            //remainder of note
+            $table->text('content')->nullable();
+            $table->unsignedBigInteger('user_id');
             $table->boolean('pinned')->default(false);
-            //if note is pinned or not
-            $table->boolean('archieved')->default(false);
-            //note is archived or not
+            $table->boolean('archived')->default(false);
             $table->boolean('deleted')->default(false);
-            // if it is deleted
             $table->unsignedInteger('index');
-            //index of note
-            $table->timestamps();
-            //making userid a foreign key with ref to users
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->timestamps();
         });
     }
-
-
 
     /**
      * Reverse the migrations.

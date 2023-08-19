@@ -12,15 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('labels', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedBigInteger('user_id');
+            $table->id();
             $table->string('label');
+            $table->unsignedBigInteger('user_id'); 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unique(['user_id','label']);
             $table->timestamps();
-            $table->unique(['user_id', 'label']);
-            //making user_id n label a unique and need to have unique constraint.
-
         });
+         
     }
 
     /**

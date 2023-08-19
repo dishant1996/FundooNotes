@@ -7,47 +7,45 @@ use App\Models\Note; // Import the Note model
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
-
-
-
-class NotesController extends Controller
+class NoteController extends Controller
 {
+
     // public function __construct()
     // {
     // }
     public function create(Request $request)
     {
-
-        // Validate the incoming request data
         $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:255',
-            'body' => 'required|string',
-            'index' => 'required|int'
+            'title' => 'required|string',
+            'content' => 'required|string',
+            'index' => 'required|string',
         ]);
-
         if ($validator->fails()) {
-            return response()->json([$validator->errors(), 401]);
+            return response()->json($validator->errors());
         }
         $note = new Note([
             'title' => $request->title,
-            'body' => $request->body,
-            'index' => $request->index
+            'content' => $request->content,
+            'index' => $request->index,
         ]);
         if (!auth()->check()) {
-            return response()->json(['message' => 'Unauthorized user'], 401);
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
         $user = auth()->user();
         if (!$user) {
-            return response()->json(['message' => 'user not found'], 404);
+            return response()->json(['error' => 'User not found, Please Sign up '], 404);
         }
         $note->user_id = Auth::user()->id;
         if ($note->save()) {
-            return response()->json(['message' => 'Note created succesfully'], 201);
+            return response()->json([
+                'message' => 'Note Created Successfully'
+            ], 201);
         } else {
-            return response()->json(['error' => 'Cant create this note']);
+            return response()->json([
+                'message' => ' Note creation failed '
+            ]);
         }
     }
-
 
     public function getNotes()
     {
@@ -92,7 +90,7 @@ class NotesController extends Controller
         // Validate the incoming request data for update
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
-            'body' => 'required|string',
+            'content' => 'required|string',
 
         ]);
 
@@ -102,7 +100,7 @@ class NotesController extends Controller
 
         // Update the note attributes
         $note->title = $request->title;
-        $note->body = $request->body;
+        $note->content = $request->content;
 
 
         if ($note->save()) {
@@ -133,8 +131,3 @@ class NotesController extends Controller
         return response()->json(['message' => 'Note deleted successfully']);
     }
 }
-
-
-
-
-

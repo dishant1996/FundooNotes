@@ -8,13 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class PasswordResetToken extends Model
 {
     use HasFactory;
-    public $table = 'password_reset_tokens';
-    public $timestamps = false;
+    protected $fillable = ['id','user','token','email','userid'];
+    public function user(){
 
-    protected $fillable = [
-        
-        'email',
-        'token',
-        'created_at',
-    ];
+        return $this->belongsTo(User::class,'userid');
+    }
 }

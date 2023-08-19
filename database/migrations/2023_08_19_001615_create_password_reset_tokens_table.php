@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->id();
-            $table->string('email')->index();
+            $table->unsignedBigInteger('user_id');
+            $table->string('email');
             $table->string('token');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
+            
         });
     }
 

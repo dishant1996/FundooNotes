@@ -7,12 +7,10 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\support\facades\Validator;
 use Illuminate\Support\Facades\Auth;
-use PhpParser\Node\Stmt\Return_;
 use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\validate;
 use App\Models\PasswordResetToken;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Notifications\ResetPassword;
+
 
 
 class AuthController extends Controller
@@ -114,6 +112,33 @@ class AuthController extends Controller
         return response()->json(['message' => 'Unable to send reset link'], 400);
     }
 
+//     public function forgotPassword(Request $request)
+// {
+//     $validator = Validator::make($request->all(), [
+//         'email' => 'required|email',
+//     ]);
+
+//     if ($validator->fails()) {
+//         return response()->json($validator->errors());
+//     }
+
+//     $user = User::where('email', $request->email)->first();
+
+//     if (!$user) {
+//         return response()->json(['message' => "User not found"], 404);
+//     }
+
+//     $token = Str::random(60);
+//     DB::table('password_reset_tokens')->updateOrInsert(
+//         ['user_id' => $user->id],
+//         ['email' => $user->email, 'token' => $token, 'created_at' => now()]
+//     );
+
+//     // Send the password reset email
+//     Mail::to($user->email)->send(new ResetPasswordMail($token)); // Assuming you have a ResetPasswordMail class
+
+//     return response()->json(['message' => 'Password reset email sent.']);
+// }
 
     public function resetPassword(Request $request)
     {
@@ -131,18 +156,18 @@ class AuthController extends Controller
         // $t= Hash::make($request->token);
         echo Hash::make($request->token);
 
-        $passwordReset = PasswordResetToken::where('email', $request->email)->first();
+        $PasswordResetToken = PasswordResetToken::where('email', $request->email)->first();
 
-        if (!$passwordReset || Hash::check($request->token, $passwordReset->token)) {
+        if (!$PasswordResetToken || Hash::check($request->token, $PasswordResetToken->token)) {
             return response()->json(['message' => "Please provide valid token"], 404);
         }
-        $user = User::where('email', $passwordReset->email)->first();
+        $user = User::where('email', $PasswordResetToken->email)->first();
         if (!$user) {
             return response()->json(['message' => "User not found"], 404);
         }
         $user->password = Hash::make($request->password);
         $user->save();
-        $passwordReset->delete();
+        $PasswordResetToken->delete();
         return response()->json(['message' => "Password changed Succesfully"],200);
     }
 }

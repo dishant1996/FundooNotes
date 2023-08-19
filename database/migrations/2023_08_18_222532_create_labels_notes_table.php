@@ -11,19 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('_labels__notes', function (Blueprint $table) {
-            $table->string('id');
-            $table->unsignedInteger('user_id');
-            $table->unsignedInteger('note_id');
-            $table->unsignedInteger('label_id');
-            $table->timestamps();
+        Schema::create('labels_notes', function (Blueprint $table) {
 
-            //linking with foriegn keys
+            $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('note_id');
+            $table->unsignedBigInteger('label_id');
+           
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('note_id')->references('id')->on('notes')->onDelete('cascade');
             $table->foreign('label_id')->references('id')->on('labels')->onDelete('cascade');
+            $table->timestamps();
         });
-        
     }
 
     /**
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('_labels__notes');
+        Schema::dropIfExists('labels_notes');
     }
 };

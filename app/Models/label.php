@@ -7,19 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Label extends Model
 {
-    use HasFactory;
-    protected $fillable = [
+    protected $fillable = ['id','label','user_id'];
 
-        'id', 'user_id', 'label'
-    ];
+    use HasFactory;
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
     public function notes()
     {
-        return $this->belongsToMany(User::class, 'label_notes', 'label_id', 'note_id')->withTimestamps();
+        return $this->belongsToMany(Note::class,
+         'labels_notes', 'label_id', 'note_id')->withTimestamps();
+       
     }
+    
+    
 }
-
-
