@@ -98,12 +98,6 @@ class AuthController extends Controller
 
     public function forgotPassword(Request $request)
     {
-        // $request->validate([
-        //     'email' => 'required|email'
-        // ]);
-
-        // $status = Password::sendResetLink($request->only('email'));
-        // echo $status;
 
         $request->validate([
 
@@ -136,29 +130,29 @@ class AuthController extends Controller
 
     public function resetPassword(Request $request)
     {
-
-        $validator = Validator::make($request->all(), [
-
-            'email' => 'required|string|email',
-            'password' => 'required|string|confirmed',
-            //'token' => 'required'
+        $request->validate([
+            'user_id' => 'required|integer',
+            //'token' => 'required|string',
+            'password' => 'required|string|confirmed'
         ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors());
-        }
 
-        $PasswordResetTokens = PasswordResetTokens::where('email', $request->email)->first();
+        //$user_id = $request->user_id;
 
-        if (!$PasswordResetTokens) {
-            return response()->json(['message' => "Please provide valid token"], 404);
+        $resetToken = PasswordResetTokens::where('user_id', $request->user_id)->first();
+
+        echo $resetToken;
+
+        if (!$resetToken) {
+            return response()->json(['message' => 'Invalid token'], 400);
         }
-        $user = User::where('email', $PasswordResetTokens->email)->first();
+        $user = User::find($request->user_id);
         if (!$user) {
-            return response()->json(['message' => "User not found"], 404);
+            return response()->json(['message' => 'Unauthroized User'], 404);
         }
-        $user->password = Hash::make($request->password);
-        $user->save();
-        $PasswordResetTokens->delete();
-        return response()->json(['message' => "Password changed Succesfully"], 200);
+        $user->update(['password' => bcrypt($request->password)]);
+
+        $resetToken->delete();
+
+        return response()->json(['message' => 'Password reset successfully'], 200);
     }
 }

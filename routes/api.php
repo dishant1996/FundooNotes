@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register',[AuthController::class,'register']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/forgotpassword',[AuthController::class,'forgotPassword']);
+Route::post('/resetpassword',[AuthController::class,'resetPassword']);
 Route::get('/notes/getnotes',[NoteController::class,'getNotes']);
 
 //middleware used and grouped
@@ -32,7 +33,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 Route::post('/logout',[AuthController::class,'logout']);
 Route::post('/verifyEmail',[AuthController::class,'verifyEmail']);
 Route::get('/userdetails',[AuthController::class,'userDetails']);
-Route::post('/resetpassword',[AuthController::class,'resetPassword']);
+//Route::post('/resetpassword',[AuthController::class,'resetPassword']);
 
 
 Route::post('/note/create',[NoteController::class,'create']);
