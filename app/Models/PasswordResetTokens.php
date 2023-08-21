@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PasswordResetToken extends Model
+class PasswordResetTokens extends Model
 {
+    protected $fillable =[ 'id','email','user_id','token'];
     use HasFactory;
-    protected $fillable = ['id','user','token','email','userid'];
+
     public function user(){
 
-        return $this->belongsTo(User::class,'userid');
+        return $this->belongsTo(User::class);
     }
 }

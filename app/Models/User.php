@@ -33,9 +33,15 @@ class User extends Authenticatable implements JWTsubject
         return $this->hasMany(Note::class);
     }
 
+    public function PasswordResetToken(){
+
+        return $this->hasMany(PasswordResetTokens::class);
+    }
+
     public function labels()
     {
         return $this->hasMany(Label::class);
+        
 
         /**
          * The attributes that are mass assignable.
